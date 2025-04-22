@@ -32,8 +32,9 @@ func main() {
 	// Create router
 	r := gin.Default()
 
+	staticFilesPath := filepath.Join(*rootDir, "/static")
 	// Serve static files
-	r.Use(static.Serve("/", static.LocalFile("./static", false)))
+	r.Use(static.Serve("/", static.LocalFile(staticFilesPath, false)))
 
 	// API routes
 	api := r.Group("/api")
