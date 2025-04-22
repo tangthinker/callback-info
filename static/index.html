@@ -13,8 +13,12 @@
             background-color: #f8f9fa;
             padding: 10px;
             border-radius: 4px;
-            max-height: 200px;
+            max-height: 1000px;
             overflow-y: auto;
+            display: none; /* Hidden by default */
+        }
+        .json-view.show {
+            display: block;
         }
         .table {
             margin-top: 20px;
@@ -50,6 +54,17 @@
         }
         .json-null {
             color: #07a;
+        }
+        .toggle-btn {
+            padding: 2px 8px;
+            font-size: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+        .toggle-btn:hover {
+            background-color: #e9ecef;
         }
     </style>
 </head>
@@ -117,6 +132,17 @@
             }
         }
 
+        function toggleParams(button) {
+            const jsonView = button.nextElementSibling;
+            if (jsonView.classList.contains('show')) {
+                jsonView.classList.remove('show');
+                button.textContent = 'Show Params';
+            } else {
+                jsonView.classList.add('show');
+                button.textContent = 'Hide Params';
+            }
+        }
+
         function loadCallbacks(page) {
             fetch(`/api/callbacks?page=${page}&pageSize=${pageSize}`)
                 .then(response => response.json())
@@ -131,7 +157,10 @@
                                 <td>${formatDate(callback.created_at)}</td>
                                 <td>${callback.id}</td>
                                 <td>${callback.ip}</td>
-                                <td><pre class="json-view">${formatJson(callback.params)}</pre></td>
+                                <td>
+                                    <button class="toggle-btn" onclick="toggleParams(this)">Show Params</button>
+                                    <pre class="json-view">${formatJson(callback.params)}</pre>
+                                </td>
                             `;
                             tbody.appendChild(tr);
                         });

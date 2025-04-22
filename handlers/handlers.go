@@ -5,9 +5,31 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
+
+func getClientIP(c *gin.Context) string {
+	// Try to get IP from X-Forwarded-For header
+	xff := c.GetHeader("X-Forwarded-For")
+	if xff != "" {
+		// X-Forwarded-For can contain multiple IPs, take the first one
+		ips := strings.Split(xff, ",")
+		if len(ips) > 0 {
+			return strings.TrimSpace(ips[0])
+		}
+	}
+
+	// Try to get IP from X-Real-IP header
+	xri := c.GetHeader("X-Real-IP")
+	if xri != "" {
+		return xri
+	}
+
+	// Fallback to client IP
+	return c.ClientIP()
+}
 
 func CallbackHandler(c *gin.Context) {
 	// Get request parameters
@@ -19,9 +41,12 @@ func CallbackHandler(c *gin.Context) {
 	// Convert params to JSON string
 	paramsJSON, _ := json.Marshal(params)
 
+	// Get client IP
+	clientIP := getClientIP(c)
+
 	// Save to database
 	err := database.SaveCallback(
-		c.ClientIP(),
+		clientIP,
 		c.Request.Host,
 		string(paramsJSON),
 	)
