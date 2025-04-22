@@ -14,20 +14,18 @@ import (
 
 func main() {
 	// Parse command line flags
-	dbPath := flag.String("db", "./callback.db", "Path to the SQLite database file")
+	rootDir := flag.String("root", ".", "Root directory for the application")
 	port := flag.String("port", "8080", "Port to listen on")
 	flag.Parse()
 
-	// Ensure the directory exists
-	dbDir := filepath.Dir(*dbPath)
-	if dbDir != "." {
-		if err := os.MkdirAll(dbDir, 0755); err != nil {
-			log.Fatalf("Failed to create database directory: %v", err)
-		}
+	// Ensure the root directory exists
+	if err := os.MkdirAll(*rootDir, 0755); err != nil {
+		log.Fatalf("Failed to create root directory: %v", err)
 	}
 
 	// Initialize database with the specified path
-	if err := database.InitDB(*dbPath); err != nil {
+	dbPath := filepath.Join(*rootDir, "callback.db")
+	if err := database.InitDB(dbPath); err != nil {
 		log.Fatal(err)
 	}
 
@@ -46,7 +44,7 @@ func main() {
 
 	// Start server
 	addr := ":" + *port
-	log.Printf("Server starting on %s with database at %s", addr, *dbPath)
+	log.Printf("Server starting on %s with root directory at %s", addr, *rootDir)
 	if err := r.Run(addr); err != nil {
 		log.Fatal(err)
 	}
