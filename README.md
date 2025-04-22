@@ -17,7 +17,7 @@ A simple web application for testing and collecting callback requests, with a cl
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/callback-info.git
+git clone https://github.com/tangthinker/callback-info.git
 cd callback-info
 ```
 

@@ -17,7 +17,7 @@
 
 1. 克隆仓库：
 ```bash
-git clone https://github.com/yourusername/callback-info.git
+git clone https://github.com/tangthinker/callback-info.git
 cd callback-info
 ```
 
